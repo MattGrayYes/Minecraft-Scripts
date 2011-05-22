@@ -5,6 +5,7 @@
 # Run up minecraft server in a named screen session first.
 # any questions/additions/fixes lemme know :)
 #
+# commands are sent into minecraft by 'stuff'ing through screen.
 
 #VERSION
 VER=1
@@ -34,10 +35,12 @@ usage()
 
 }
 
+# Set defaults
 USER=
 DELAY=60
 SCREENNAME=MinecraftServer
 
+# Get options, deal with them
 while getopts "hu:d:n:v" OPTION
 do
     case $OPTION in
@@ -65,37 +68,51 @@ do
     esac
 done
 
-#DELAY NEEDS TO BE -LT 60
+# Check if input is sufficient
 if [[ -z $USER ]] || [[ -z SCREENNAME ]] || [[ $DELAY -lt 60 ]]
 then
     usage
     exit 1
 fi
 
-echo "USER: $USER"
-echo "DELAY: $DELAY"
-echo "SCREENNAME: $SCREENNAME"
+# Reiterate what the user typed in, in case the user is stupid.
+echo ""
+echo "User: $USER"
+echo "Delay (seconds): $DELAY"
+echo "Screen session name: $SCREENNAME"
+echo ""
 echo ""
 
 echo "Pardoning $USER:"
-screen -S $SCREENNAME -X stuff "say $USER is being allowed $DELAY on MC `echo -ne '\015'`"
+# tell everyone on the server what's happening
+screen -S $SCREENNAME -X stuff "say $USER is being allowed $DELAYs on MC `echo -ne '\015'`"
+# pardon the user
 screen -S $SCREENNAME -X stuff "pardon $USER`echo -ne '\015'`"
 
+#take 30s off the delay time to include warning
 SLEEP=$(($DELAY - 30))
 echo "Waiting $SLEEP seconds, will tell server, then kick 30s later"
 
-
 sleep $SLEEP
 
+#with 30s to go, warn server occupants what is about to happen
 echo "Warning server"
-screen -S $SCREENNAME -X stuff "say $USER will be kicked in 30s. `echo -ne '\015'`"
+screen -S $SCREENNAME -X stuff "say $USER will be kicked and banned in 30s. `echo -ne '\015'`"
 
-sleep 30
+sleep 20
+
+echo "Bye Bye $USER"
+screen -S $SCREENNAME -X stuff "say Bye bye $USER! `echo -ne '\015'`"
+
+sleep 10
 
 echo "Kicking $USER"
 screen -S $SCREENNAME -X stuff "kick $USER `echo -ne '\015'`"
 
 echo "Banning $USER"
 screen -S $SCREENNAME -X stuff "ban $USER `echo -ne '\015'`"
+
+echo "Insult $USER behind $USER's back"
+screen -S $SCREENNAME -X stuff "say I didn't like $USER anyway `echo -ne '\015'`"
 
 exit
