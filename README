@@ -1,0 +1,19 @@
+Usage: mckick.sh -u username [-d delay(seconds)] [-n screen name]
+
+Minecraft Kick.
+Version: 1
+Matt G | mattg.co.uk | @unnamedculprit on twitter
+
+OPTIONS:
+-h show this message
+-u set username
+-d delay before kick IN SECONDS (min 60). Default value: 1 hour (3600s)
+-n name of Screen session MC is running in. Default value: MinecraftServer
+    example: mckick.sh -u unnamedculprit
+    example: mckick.sh -u unnamedculprit -d 600 -n MCServerScreen
+
+ABOUT:
+This script pardons a banned user on a minecraft server for a specified time and then bans them again.
+It is intended to be used for time management, as it's way too easy to accidentally play for too long.
+For this to work, Minecraft needs to be run in screen like so:
+screen -S MinecraftServer -c MINECRAFTDIR/screenrc java -Xmx200M -Xms200M -jar MINECRAFTDIR/minecraft_server.jar nogui
